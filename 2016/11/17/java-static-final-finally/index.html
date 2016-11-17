@@ -5,15 +5,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>about | Wu Wenqi&#39;s Blog</title>
+  <title>Java关键字之static final finally | Wu Wenqi&#39;s Blog</title>
   <meta name="author" content="Wu Wenqi">
   
-  <meta name="description" content="About me待编辑">
+  <meta name="description" content="概括来说：在JAVA关键字中，final表示“无法改变的”，static表示“静态的”，即在类没有实例化的时候也能够通过类名进行访问，finally关键字表示在try catch之后进行一些收尾的工作。　　下面依次对于三个关键字进行总结。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="about"/>
+  <meta property="og:title" content="Java关键字之static final finally"/>
   <meta property="og:site_name" content="Wu Wenqi&#39;s Blog"/>
 
   
@@ -202,27 +202,69 @@
 </nav>
 <div class="clearfix"></div></header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper"><article class="page">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
   
   <div class="post-content">
     <header>
       
+        <div class="icon"></div>
+        <time datetime="2016-11-17T07:49:14.000Z"><a href="/2016/11/17/java-static-final-finally/">2016-11-17</a></time>
+      
       
   
-    <h1 class="title">about</h1>
+    <h1 class="title">Java关键字之static final finally</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>About me<br>待编辑</p>
+        <p>　　概括来说：在JAVA关键字中，final表示“无法改变的”，static表示“静态的”，即在类没有实例化的时候也能够通过类名进行访问，finally关键字表示在try catch之后进行一些收尾的工作。<br>　　下面依次对于三个关键字进行总结。<br><a id="more"></a></p>
+<h3 id="一、final关键字"><a href="#一、final关键字" class="headerlink" title="一、final关键字"></a>一、final关键字</h3><ol>
+<li>当一个类被final修饰的时候，此类不能被继承，没有子类，final类中的方法默认都是final类型的。</li>
+<li>final方法不能被覆盖，能被继承。一个方法被修饰为final的好处在于1.方法锁定，不能被重写覆盖；2.高效，编译器在遇到final方式时会转入内嵌机制。</li>
+<li>final成员变量只能被赋值一次，而且在定义时就必须给定初值，哪怕是NULL，被赋值之后就不能够被改变。一种比较特殊的是“final空白”，即一个final变量在声明时没有赋值，但是这个变量在类进行初始化对象的时候进行赋值，即确保final空白在使用之前被赋值。</li>
+<li>final不能修饰构造方法。</li>
+<li>因为父类的private方法不能够被子类方法覆盖，所以private方法默认是final类型的。</li>
+<li>当函数形参被设置为final时，在函数内部变量不能够被修改。</li>
+</ol>
+<h3 id="二、static关键字"><a href="#二、static关键字" class="headerlink" title="二、static关键字"></a>二、static关键字</h3><ol>
+<li>static变量又叫做静态变量，与之对应的就是实例变量。静态变量在内存中只有一个拷贝，可以通过类名直接访问，也可以通过类对象来访问（不推荐这种方式）。对于实例变量，每实例化一个对象，就为实例变量分配一次内存，实例之间互不影响。<br>２．静态方法可以直接通过类名访问，静态方法中不能有this或者super关键字，只能访问类中的静态变量或者其他静态方法。因为静态方法独立于任何实例，所以必须被实现，所以一个静态方法不能是abstract类型的。</li>
+<li>static代码块，在类加载时候使用，可以有多个，执行顺序根据出现顺序而定。</li>
+</ol>
+<h3 id="三、static与final同时使用"><a href="#三、static与final同时使用" class="headerlink" title="三、static与final同时使用"></a>三、static与final同时使用</h3><ol>
+<li>static与final同时修饰变量时，表示”全局变量”，不可修改，可以通过类名访问。其中比较特殊的是同时修饰一些容器类型的时候，容器本身不能够被改变，但是可以修改容器中存放的对象。</li>
+<li>static与final同时修饰方法时，表示不可覆盖，可以通过类名访问。</li>
+</ol>
+<h3 id="四、finally关键字"><a href="#四、finally关键字" class="headerlink" title="四、finally关键字"></a>四、finally关键字</h3><p>　　finally关键字是在try catch之后进行一些收尾工作，比如关闭链接或者释放资源。需要注意的一点是。finally代码快执行的时机实在try语句块中return语句执行之后，程序真正return之前。</p>
 
       
     </div>
     <footer>
       
         
+  
+  <div class="categories">
+    <a href="/categories/Java/">Java</a>
+  </div>
+
         
+  
+  <div class="tags">
+    <a href="/tags/Java/">Java</a>, <a href="/tags/关键字/">关键字</a>
+  </div>
+
 <!-- Baidu Button BEGIN -->
 <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
 <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
@@ -236,6 +278,8 @@
 
 <nav id="pagination" >
     
+    
+    <a href="/2016/11/09/nginx-note/" class="alignright next" >下一页</a>
     
     <div class="clearfix"></div>
 </nav>

@@ -5,21 +5,16 @@
 <head>
   <meta charset="utf-8">
   
-  <title>markdown学习笔记 | Wu Wenqi&#39;s Blog</title>
+  <title>一致性Hash算法 | Wu Wenqi&#39;s Blog</title>
   <meta name="author" content="Wu Wenqi">
   
-  <meta name="description" content="在入门学习markdown语法的时候，推荐两个教程
-
-献给写作者的 Markdown 新手指南 (简单教程，比较容易上手)
-Markdown 语法说明 (简体中文版) (很详细，掌握markdown之后查询使用)
-
-编辑器推荐因为在windows与Ubuntu双系统上工作，所以推荐Atom编辑器，github推出，可以去尝试一下。
-编辑md文件，按住Ctrl+shift+p，输入“Markdown Preview: Toggle”，回车即可及时预览。">
+  <meta name="description" content="前几天对于一致性hash算法进行了研究学习，下面是一些学习记录。　　对于一致性hash算法的理论与基础知识，我参考了几篇博客，在这里就不再赘述。　　一致性 hash 算法（ consistent hashing ）  
+关键知识点　　这里要记录的几个关键的点是：　　1. 一致性hash的核心思想就是将key与value都映射到一个2的32次方长度的整数环上；　　2. 对于一个key值来说，首先求出其hash值，然后顺时针查找距离其最近的服务器节点，从而完成整个映射过程；　　3. 虚拟节点是为了解决服务器节点的hash在整数环上分布不均衡的问题。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="markdown学习笔记"/>
+  <meta property="og:title" content="一致性Hash算法"/>
   <meta property="og:site_name" content="Wu Wenqi&#39;s Blog"/>
 
   
@@ -226,89 +221,24 @@ Markdown 语法说明 (简体中文版) (很详细，掌握markdown之后查询�
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-11-09T12:28:36.000Z"><a href="/2016/11/09/markdownStudyNote/">2016-11-09</a></time>
+        <time datetime="2017-05-22T10:13:56.000Z"><a href="/2017/05/22/consistent-hashing/">2017-05-22</a></time>
       
       
   
-    <h1 class="title">markdown学习笔记</h1>
+    <h1 class="title">一致性Hash算法</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>在入门学习markdown语法的时候，推荐两个教程</p>
-<ul>
-<li><a href="http://www.jianshu.com/p/q81RER#" target="_blank" rel="external">献给写作者的 Markdown 新手指南</a> (简单教程，比较容易上手)</li>
-<li><a href="http://wowubuntu.com/markdown/" target="_blank" rel="external">Markdown 语法说明 (简体中文版)</a> (很详细，掌握markdown之后查询使用)</li>
-</ul>
-<h3 id="编辑器推荐"><a href="#编辑器推荐" class="headerlink" title="编辑器推荐"></a>编辑器推荐</h3><p>因为在windows与Ubuntu双系统上工作，所以推荐Atom编辑器，github推出，可以去尝试一下。</p>
-<p>编辑md文件，按住Ctrl+shift+p，输入“Markdown Preview: Toggle”，回车即可及时预览。</p>
-<a id="more"></a>
-<h1 id="一级标题"><a href="#一级标题" class="headerlink" title="一级标题"></a>一级标题</h1><h2 id="二级标题"><a href="#二级标题" class="headerlink" title="二级标题"></a>二级标题</h2><h3 id="三级标题"><a href="#三级标题" class="headerlink" title="三级标题"></a>三级标题</h3><h4 id="四级标题"><a href="#四级标题" class="headerlink" title="四级标题"></a>四级标题</h4><h5 id="五级标题"><a href="#五级标题" class="headerlink" title="五级标题"></a>五级标题</h5><h6 id="六级标题"><a href="#六级标题" class="headerlink" title="六级标题"></a>六级标题</h6><h3 id="无须列表"><a href="#无须列表" class="headerlink" title="无须列表"></a>无须列表</h3><ul>
-<li>文本1</li>
-<li>文本2</li>
-<li>文本3</li>
-</ul>
-<h3 id="有序列表"><a href="#有序列表" class="headerlink" title="有序列表"></a>有序列表</h3><ol>
-<li>标题1</li>
-<li>标题2</li>
-<li>标题3</li>
-</ol>
-<h3 id="链接示例"><a href="#链接示例" class="headerlink" title="链接示例"></a>链接示例</h3><p><a href="www.jd.com">京东</a></p>
-<h3 id="图片示例"><a href="#图片示例" class="headerlink" title="图片示例"></a>图片示例</h3><ul>
-<li>静态图片</li>
-</ul>
-<p><img src="http://7xsg7z.com1.z0.glb.clouddn.com/2813412_14_thumb.jpg" alt=""></p>
-<ul>
-<li>动态图片</li>
-</ul>
-<p><img src="http://7xsg7z.com1.z0.glb.clouddn.com/b219ebc4b74543a9364987b71c178a82b901147e.gif" alt=""></p>
-<h3 id="文字引用示例"><a href="#文字引用示例" class="headerlink" title="文字引用示例"></a>文字引用示例</h3><blockquote>
-<p>一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。</p>
-</blockquote>
-<h3 id="诗的引用"><a href="#诗的引用" class="headerlink" title="诗的引用"></a>诗的引用</h3><blockquote>
-<p>朝辞白帝彩云间</p>
-<p>千里江陵一日还</p>
-<p>两岸猿声啼不住</p>
-<p>轻舟已过万重山</p>
-</blockquote>
-<h3 id="粗体和斜体示例"><a href="#粗体和斜体示例" class="headerlink" title="粗体和斜体示例"></a>粗体和斜体示例</h3><p><em>我是斜体</em></p>
-<p><strong>大家好，我是粗体</strong></p>
-<h3 id="表格示例"><a href="#表格示例" class="headerlink" title="表格示例"></a>表格示例</h3><table>
-<thead>
-<tr>
-<th>省份</th>
-<th>省会</th>
-<th>简称</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>安徽</td>
-<td>合肥</td>
-<td>皖</td>
-</tr>
-<tr>
-<td>山东</td>
-<td>济南</td>
-<td>鲁</td>
-</tr>
-<tr>
-<td>黑龙江</td>
-<td>哈尔滨</td>
-<td>黑</td>
-</tr>
-<tr>
-<td>北京</td>
-<td>北京</td>
-<td>京</td>
-</tr>
-</tbody>
-</table>
-<h3 id="显示链接中带括号的图片"><a href="#显示链接中带括号的图片" class="headerlink" title="显示链接中带括号的图片"></a>显示链接中带括号的图片</h3><p><img src="http://latex.codecogs.com/gif.latex?\prod%20\(n_{i}\)+1" alt=""></p>
-<h3 id="段落开头空两个"><a href="#段落开头空两个" class="headerlink" title="段落开头空两个"></a>段落开头空两个</h3><p>　　将中文输入法切换至全角模式，然后输入两个空格即可。</p>
-<h3 id="段落换行"><a href="#段落换行" class="headerlink" title="段落换行"></a>段落换行</h3><p>　　在要换行的地方输入两个空格即可。<br>　　如此处所示。</p>
-<h3 id="更多markdown语法，待续"><a href="#更多markdown语法，待续" class="headerlink" title="更多markdown语法，待续"></a>更多markdown语法，待续</h3>
+        <p>　　前几天对于一致性hash算法进行了研究学习，下面是一些学习记录。<br>　　对于一致性hash算法的理论与基础知识，我参考了几篇博客，在这里就不再赘述。<br>　　<a href="http://blog.csdn.net/sparkliang/article/details/5279393" target="_blank" rel="external">一致性 hash 算法（ consistent hashing ）</a>  </p>
+<h3 id="关键知识点"><a href="#关键知识点" class="headerlink" title="关键知识点"></a>关键知识点</h3><p>　　这里要记录的几个关键的点是：<br>　　1. 一致性hash的核心思想就是将key与value都映射到一个2的32次方长度的整数环上；<br>　　2. 对于一个key值来说，首先求出其hash值，然后顺时针查找距离其最近的服务器节点，从而完成整个映射过程；<br>　　3. 虚拟节点是为了解决服务器节点的hash在整数环上分布不均衡的问题。<br><a id="more"></a></p>
+<h3 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h3><p>　　下面给出一致性hash算法的Java版本实现代码。这里参考了如下博客。<br>　　<a href="http://www.cnblogs.com/xrq730/p/5186728.html" target="_blank" rel="external">对一致性Hash算法，Java代码实现的深入研究</a><br>　　博客中的代码非常详细，特别是描述了整个思考过程，值得学习。<br>　　特别是以下几点：<br>　　1. 采用TreeMap来模拟整数环，提高查找效率（整个思考的过程非常值得学习）；<br>　　2. 重写Hash算法，避免Hash值在整数环上过于集中的问题。<br>　　3. 在使用虚拟节点的时候，将一个实际节点拆分为多少虚拟节点合适，有个经验值，参考下图。  </p>
+<p><center><img src="http://images2015.cnblogs.com/blog/801753/201602/801753-20160212234143027-642938706.png" alt=""></center>  </p>
+<h3 id="需要注意的地方"><a href="#需要注意的地方" class="headerlink" title="需要注意的地方"></a>需要注意的地方</h3><p>　　尽管博客中的算法非常详细，但是我感觉还有一个小的疏漏。<br>　　在源代码中，顺时针查找最近的服务器节点采用的方法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 得到应当路由到的结点</div><div class="line"> */</div><div class="line">private static String getServer(String node)</div><div class="line">&#123;</div><div class="line">    // 得到带路由的结点的Hash值</div><div class="line">    int hash = getHash(node);</div><div class="line">    // 得到大于该Hash值的所有Map</div><div class="line">    SortedMap&lt;Integer, String&gt; subMap =</div><div class="line">            sortedMap.tailMap(hash);</div><div class="line">    // 第一个Key就是顺时针过去离node最近的那个结点</div><div class="line">    Integer i = subMap.firstKey();</div><div class="line">    // 返回对应的服务器名称</div><div class="line">    return subMap.get(i);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>　　这里没有考虑tailMap返回结果为空的情况，有些情况下会出现报错。如果要模拟整数环，这里正确的做法是返回最小的key对应的服务器。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">private static String getServer(String node) &#123;</div><div class="line">    int hash = getHash(node);</div><div class="line">    SortedMap&lt;Integer, String&gt; subMap = sortedMap.tailMap(hash);</div><div class="line"></div><div class="line">    //对于不存在比key大的hash值的情况，返回最小的key，用于模拟环状结构</div><div class="line">    if (subMap.size() == 0) &#123;</div><div class="line">        return sortedMap.get(sortedMap.firstKey());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Integer key = subMap.firstKey();</div><div class="line">    return subMap.get(key);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>　　详细代码请点击<a href="https://github.com/WenqiWu/Consistent-Hashing/" target="_blank" rel="external">这里</a>。</p>
+
       
     </div>
     <footer>
@@ -316,13 +246,13 @@ Markdown 语法说明 (简体中文版) (很详细，掌握markdown之后查询�
         
   
   <div class="categories">
-    <a href="/categories/markdown/">markdown</a>
+    <a href="/categories/算法/">算法</a>
   </div>
 
         
   
   <div class="tags">
-    <a href="/tags/markdown/">markdown</a>, <a href="/tags/学习笔记/">学习笔记</a>
+    <a href="/tags/算法/">算法</a>, <a href="/tags/一致性hash/">一致性hash</a>, <a href="/tags/Java/">Java</a>
   </div>
 
 <!-- Baidu Button BEGIN -->
@@ -338,8 +268,8 @@ Markdown 语法说明 (简体中文版) (很详细，掌握markdown之后查询�
 
 <nav id="pagination" >
     
-    <a href="/2016/11/09/nginx-note/" class="alignleft prev" >上一页</a>
     
+    <a href="/2017/04/26/currentThread-and-this/" class="alignright next" >下一页</a>
     
     <div class="clearfix"></div>
 </nav>

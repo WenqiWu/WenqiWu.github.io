@@ -5,13 +5,16 @@
 <head>
   <meta charset="utf-8">
   
-  <title>归档：2017 | Wu Wenqi&#39;s Blog</title>
+  <title>SQL语句知识点 | Wu Wenqi&#39;s Blog</title>
   <meta name="author" content="Wu Wenqi">
+  
+  <meta name="description" content="这两天开始复习SQL，主要是针对于SQL查询语句进行练习，目的是能够在较短时间内写出SQL查询语句。
+　　目前根据个人总结来说，查询SQL主要集中在两表查询，主要是两张表之间的join操作。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="SQL语句知识点"/>
   <meta property="og:site_name" content="Wu Wenqi&#39;s Blog"/>
 
   
@@ -200,37 +203,86 @@
 </nav>
 <div class="clearfix"></div></header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-<h2 class="archive-title">2017</h2>
-
-
-  <div class="archive">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2017-05-22T10:13:56.000Z"><a href="/2017/05/22/consistent-hashing/">2017-05-22</a></time>
-            
-              <h1 class="title"><a href="/2017/05/22/consistent-hashing/">一致性Hash算法</a></h1>
-            
-          </header>
-        </div>
-      </article>
-    
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2017-04-26T15:46:24.000Z"><a href="/2017/04/26/currentThread-and-this/">2017-04-26</a></time>
-            
-              <h1 class="title"><a href="/2017/04/26/currentThread-and-this/">Thread.currentThread.getName与this.getName的区别</a></h1>
-            
-          </header>
-        </div>
-      </article>
+      <img src="">
     
   </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2019-09-03T14:19:54.000Z"><a href="/2019/09/03/SQL语句知识点/">2019-09-03</a></time>
+      
+      
+  
+    <h1 class="title">SQL语句知识点</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>　　这两天开始复习SQL，主要是针对于SQL查询语句进行练习，目的是能够在较短时间内写出SQL查询语句。</p>
+<p>　　目前根据个人总结来说，查询SQL主要集中在两表查询，主要是两张表之间的join操作。</p>
+<a id="more"></a>
+<h3 id="join"><a href="#join" class="headerlink" title="join"></a>join</h3><p>　　join操作作为两表联合查询的基础，遇到的频率很高，也是必须要掌握的地方。</p>
+<p>　　一些基础的概念可以参考这篇文章。<a href="https://www.cnblogs.com/reaptomorrow-flydream/p/8145610.html" target="_blank" rel="noopener">SQL的各种连接Join详解</a>，里面已经讲的很详细了。我在这里概述一下。</p>
+<p>　　1. inner join(等同于join): 如果表中有至少一个匹配，则返回行</p>
+<p>　　2. left join: 即使右表中没有匹配，也从左表返回所有的行</p>
+<p>　　3. right join: 即使左表中没有匹配，也从右表返回所有的行</p>
+<p>　　4. full join: 只要其中一个表中存在匹配，就返回行</p>
+<p>　　其中inner join为内连接，其他三种为外连接。left/right join在一些要求匹配null的情况时要第一时间考虑到。</p>
+<h3 id="limit"><a href="#limit" class="headerlink" title="limit"></a>limit</h3><p>　　limit(n, m)，意为从第n条记录开始（记录编号从0开始），选取长度为m的记录数，当n为0时，可以省略，直接写作limit(m)。</p>
+<p>　　limit一般用于求经过排序之后排名第N的记录，比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">查询工资表中薪水第二高的员工信息</div></pre></td></tr></table></figure>
+<h3 id="datediff"><a href="#datediff" class="headerlink" title="datediff"></a>datediff</h3><p>　　用于计算两个日期之间的时间差。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/SQL/">SQL</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/SQL/">SQL</a>, <a href="/tags/练习/">练习</a>
+  </div>
+
+<!-- Baidu Button BEGIN -->
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+<!-- Baidu Button END -->      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+<nav id="pagination" >
+    
+    
+    <a href="/2019/01/23/recover-blog/" class="alignright next" >下一页</a>
+    
+    <div class="clearfix"></div>
+</nav>
+
+
+
 </div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">

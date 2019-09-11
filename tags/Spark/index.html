@@ -5,16 +5,13 @@
 <head>
   <meta charset="utf-8">
   
-  <title>一致性Hash算法 | Wu Wenqi&#39;s Blog</title>
+  <title>Spark | Wu Wenqi&#39;s Blog</title>
   <meta name="author" content="Wu Wenqi">
-  
-  <meta name="description" content="前几天对于一致性hash算法进行了研究学习，下面是一些学习记录。　　对于一致性hash算法的理论与基础知识，我参考了几篇博客，在这里就不再赘述。　　一致性 hash 算法（ consistent hashing ）  
-关键知识点　　这里要记录的几个关键的点是：　　1. 一致性hash的核心思想就是将key与value都映射到一个2的32次方长度的整数环上；　　2. 对于一个key值来说，首先求出其hash值，然后顺时针查找距离其最近的服务器节点，从而完成整个映射过程；　　3. 虚拟节点是为了解决服务器节点的hash在整数环上分布不均衡的问题。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="一致性Hash算法"/>
+  
   <meta property="og:site_name" content="Wu Wenqi&#39;s Blog"/>
 
   
@@ -203,81 +200,25 @@
 </nav>
 <div class="clearfix"></div></header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
-  
-    <div class="gallery">
-  <div class="photoset">
+    <div id="main-col" class="alignleft"><div id="wrapper">
+<h2 class="archive-title tag">Spark</h2>
+
+
+  <div class="archive">
     
-      <img src="">
+      <article class="post">
+        <div class="post-content">
+          <header>
+            <div class="icon"></div>
+            <time datetime="2019-09-10T23:30:07.000Z"><a href="/2019/09/11/occupancy-rate-of-cpu/">2019-09-11</a></time>
+            
+              <h1 class="title"><a href="/2019/09/11/occupancy-rate-of-cpu/">Spark Streaming程序Driver节点cpu占用率较高情况排查过程</a></h1>
+            
+          </header>
+        </div>
+      </article>
     
   </div>
-  <div class="control">
-    <div class="prev"></div>
-    <div class="next"></div>
-  </div>
-</div>
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-05-22T10:13:56.000Z"><a href="/2017/05/22/consistent-hashing/">2017-05-22</a></time>
-      
-      
-  
-    <h1 class="title">一致性Hash算法</h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>　　前几天对于一致性hash算法进行了研究学习，下面是一些学习记录。<br>　　对于一致性hash算法的理论与基础知识，我参考了几篇博客，在这里就不再赘述。<br>　　<a href="http://blog.csdn.net/sparkliang/article/details/5279393" target="_blank" rel="noopener">一致性 hash 算法（ consistent hashing ）</a>  </p>
-<h3 id="关键知识点"><a href="#关键知识点" class="headerlink" title="关键知识点"></a>关键知识点</h3><p>　　这里要记录的几个关键的点是：<br>　　1. 一致性hash的核心思想就是将key与value都映射到一个2的32次方长度的整数环上；<br>　　2. 对于一个key值来说，首先求出其hash值，然后顺时针查找距离其最近的服务器节点，从而完成整个映射过程；<br>　　3. 虚拟节点是为了解决服务器节点的hash在整数环上分布不均衡的问题。<br><a id="more"></a></p>
-<h3 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h3><p>　　下面给出一致性hash算法的Java版本实现代码。这里参考了如下博客。<br>　　<a href="http://www.cnblogs.com/xrq730/p/5186728.html" target="_blank" rel="noopener">对一致性Hash算法，Java代码实现的深入研究</a><br>　　博客中的代码非常详细，特别是描述了整个思考过程，值得学习。<br>　　特别是以下几点：<br>　　1. 采用TreeMap来模拟整数环，提高查找效率（整个思考的过程非常值得学习）；<br>　　2. 重写Hash算法，避免Hash值在整数环上过于集中的问题。<br>　　3. 在使用虚拟节点的时候，将一个实际节点拆分为多少虚拟节点合适，有个经验值，参考下图。  </p>
-<p><center><img src="http://images2015.cnblogs.com/blog/801753/201602/801753-20160212234143027-642938706.png" alt=""></center>  </p>
-<h3 id="需要注意的地方"><a href="#需要注意的地方" class="headerlink" title="需要注意的地方"></a>需要注意的地方</h3><p>　　尽管博客中的算法非常详细，但是我感觉还有一个小的疏漏。<br>　　在源代码中，顺时针查找最近的服务器节点采用的方法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 得到应当路由到的结点</div><div class="line"> */</div><div class="line">private static String getServer(String node)</div><div class="line">&#123;</div><div class="line">    // 得到带路由的结点的Hash值</div><div class="line">    int hash = getHash(node);</div><div class="line">    // 得到大于该Hash值的所有Map</div><div class="line">    SortedMap&lt;Integer, String&gt; subMap =</div><div class="line">            sortedMap.tailMap(hash);</div><div class="line">    // 第一个Key就是顺时针过去离node最近的那个结点</div><div class="line">    Integer i = subMap.firstKey();</div><div class="line">    // 返回对应的服务器名称</div><div class="line">    return subMap.get(i);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>　　这里没有考虑tailMap返回结果为空的情况，有些情况下会出现报错。如果要模拟整数环，这里正确的做法是返回最小的key对应的服务器。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">private static String getServer(String node) &#123;</div><div class="line">    int hash = getHash(node);</div><div class="line">    SortedMap&lt;Integer, String&gt; subMap = sortedMap.tailMap(hash);</div><div class="line"></div><div class="line">    //对于不存在比key大的hash值的情况，返回最小的key，用于模拟环状结构</div><div class="line">    if (subMap.size() == 0) &#123;</div><div class="line">        return sortedMap.get(sortedMap.firstKey());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Integer key = subMap.firstKey();</div><div class="line">    return subMap.get(key);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>　　详细代码请点击<a href="https://github.com/WenqiWu/Consistent-Hashing/" target="_blank" rel="noopener">这里</a>。  </p>
-
-      
-    </div>
-    <footer>
-      
-        
-  
-  <div class="categories">
-    <a href="/categories/算法/">算法</a>
-  </div>
-
-        
-  
-  <div class="tags">
-    <a href="/tags/Java/">Java</a>, <a href="/tags/算法/">算法</a>, <a href="/tags/一致性hash/">一致性hash</a>
-  </div>
-
-<!-- Baidu Button BEGIN -->
-<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
-<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
-<!-- Baidu Button END -->      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-<nav id="pagination" >
-    
-    <a href="/2018/03/02/essay-2018-03-02/" class="alignleft prev" >上一页</a>
-    
-    
-    <a href="/2017/04/26/currentThread-and-this/" class="alignright next" >下一页</a>
-    
-    <div class="clearfix"></div>
-</nav>
-
-
-
 </div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">

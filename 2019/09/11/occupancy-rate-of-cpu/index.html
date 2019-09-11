@@ -5,16 +5,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>一致性Hash算法 | Wu Wenqi&#39;s Blog</title>
+  <title>Spark Streaming程序Driver节点cpu占用率较高情况排查过程 | Wu Wenqi&#39;s Blog</title>
   <meta name="author" content="Wu Wenqi">
   
-  <meta name="description" content="前几天对于一致性hash算法进行了研究学习，下面是一些学习记录。　　对于一致性hash算法的理论与基础知识，我参考了几篇博客，在这里就不再赘述。　　一致性 hash 算法（ consistent hashing ）  
-关键知识点　　这里要记录的几个关键的点是：　　1. 一致性hash的核心思想就是将key与value都映射到一个2的32次方长度的整数环上；　　2. 对于一个key值来说，首先求出其hash值，然后顺时针查找距离其最近的服务器节点，从而完成整个映射过程；　　3. 虚拟节点是为了解决服务器节点的hash在整数环上分布不均衡的问题。">
+  <meta name="description" content="之前在工作的时候运行编写的Spark Streaming程序，在运行一段时间后（大概12-18个小时），Driver节点会出现cpu占用率较高的情况，具体表现为某个时间点，cpu占用率会突然飙升至100%，然后维持在这一水平附近，导致Spark Streaming程序无法继续运行，而所有的Worker节点的监控指标均正常，只有Driver节点出现此问题。　　下来来看一下，针对这个事情，我的一个大概的定位过程，与原因分析。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="一致性Hash算法"/>
+  <meta property="og:title" content="Spark Streaming程序Driver节点cpu占用率较高情况排查过程"/>
   <meta property="og:site_name" content="Wu Wenqi&#39;s Blog"/>
 
   
@@ -221,23 +220,29 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2017-05-22T10:13:56.000Z"><a href="/2017/05/22/consistent-hashing/">2017-05-22</a></time>
+        <time datetime="2019-09-10T23:30:07.000Z"><a href="/2019/09/11/occupancy-rate-of-cpu/">2019-09-11</a></time>
       
       
   
-    <h1 class="title">一致性Hash算法</h1>
+    <h1 class="title">Spark Streaming程序Driver节点cpu占用率较高情况排查过程</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>　　前几天对于一致性hash算法进行了研究学习，下面是一些学习记录。<br>　　对于一致性hash算法的理论与基础知识，我参考了几篇博客，在这里就不再赘述。<br>　　<a href="http://blog.csdn.net/sparkliang/article/details/5279393" target="_blank" rel="noopener">一致性 hash 算法（ consistent hashing ）</a>  </p>
-<h3 id="关键知识点"><a href="#关键知识点" class="headerlink" title="关键知识点"></a>关键知识点</h3><p>　　这里要记录的几个关键的点是：<br>　　1. 一致性hash的核心思想就是将key与value都映射到一个2的32次方长度的整数环上；<br>　　2. 对于一个key值来说，首先求出其hash值，然后顺时针查找距离其最近的服务器节点，从而完成整个映射过程；<br>　　3. 虚拟节点是为了解决服务器节点的hash在整数环上分布不均衡的问题。<br><a id="more"></a></p>
-<h3 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h3><p>　　下面给出一致性hash算法的Java版本实现代码。这里参考了如下博客。<br>　　<a href="http://www.cnblogs.com/xrq730/p/5186728.html" target="_blank" rel="noopener">对一致性Hash算法，Java代码实现的深入研究</a><br>　　博客中的代码非常详细，特别是描述了整个思考过程，值得学习。<br>　　特别是以下几点：<br>　　1. 采用TreeMap来模拟整数环，提高查找效率（整个思考的过程非常值得学习）；<br>　　2. 重写Hash算法，避免Hash值在整数环上过于集中的问题。<br>　　3. 在使用虚拟节点的时候，将一个实际节点拆分为多少虚拟节点合适，有个经验值，参考下图。  </p>
-<p><center><img src="http://images2015.cnblogs.com/blog/801753/201602/801753-20160212234143027-642938706.png" alt=""></center>  </p>
-<h3 id="需要注意的地方"><a href="#需要注意的地方" class="headerlink" title="需要注意的地方"></a>需要注意的地方</h3><p>　　尽管博客中的算法非常详细，但是我感觉还有一个小的疏漏。<br>　　在源代码中，顺时针查找最近的服务器节点采用的方法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 得到应当路由到的结点</div><div class="line"> */</div><div class="line">private static String getServer(String node)</div><div class="line">&#123;</div><div class="line">    // 得到带路由的结点的Hash值</div><div class="line">    int hash = getHash(node);</div><div class="line">    // 得到大于该Hash值的所有Map</div><div class="line">    SortedMap&lt;Integer, String&gt; subMap =</div><div class="line">            sortedMap.tailMap(hash);</div><div class="line">    // 第一个Key就是顺时针过去离node最近的那个结点</div><div class="line">    Integer i = subMap.firstKey();</div><div class="line">    // 返回对应的服务器名称</div><div class="line">    return subMap.get(i);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>　　这里没有考虑tailMap返回结果为空的情况，有些情况下会出现报错。如果要模拟整数环，这里正确的做法是返回最小的key对应的服务器。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">private static String getServer(String node) &#123;</div><div class="line">    int hash = getHash(node);</div><div class="line">    SortedMap&lt;Integer, String&gt; subMap = sortedMap.tailMap(hash);</div><div class="line"></div><div class="line">    //对于不存在比key大的hash值的情况，返回最小的key，用于模拟环状结构</div><div class="line">    if (subMap.size() == 0) &#123;</div><div class="line">        return sortedMap.get(sortedMap.firstKey());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Integer key = subMap.firstKey();</div><div class="line">    return subMap.get(key);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>　　详细代码请点击<a href="https://github.com/WenqiWu/Consistent-Hashing/" target="_blank" rel="noopener">这里</a>。  </p>
+        <p>　　之前在工作的时候运行编写的Spark Streaming程序，在运行一段时间后（大概12-18个小时），Driver节点会出现cpu占用率较高的情况，具体表现为某个时间点，cpu占用率会突然飙升至100%，然后维持在这一水平附近，导致Spark Streaming程序无法继续运行，而所有的Worker节点的监控指标均正常，只有Driver节点出现此问题。<br>　　下来来看一下，针对这个事情，我的一个大概的定位过程，与原因分析。<br>　<a id="more"></a></p>
+<h3 id="1-查看线程信息"><a href="#1-查看线程信息" class="headerlink" title="1.查看线程信息"></a>1.查看线程信息</h3><p>　　首先通过Linux中的<strong><em>ps</em></strong>或者<strong><em>top</em></strong>命令来查看Spark Streaming程序的进程编号（pid），例如使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ps -ef | grep keyword</div></pre></td></tr></table></figure></p>
+<p>命令来查找程序的进程号。同理，输入<strong><em>top</em></strong>命令，观察cpu占用较高的线程也能够确定其线程号。  </p>
+<h3 id="2-查看线程中占用cpu较高的线程情况"><a href="#2-查看线程中占用cpu较高的线程情况" class="headerlink" title="2.查看线程中占用cpu较高的线程情况"></a>2.查看线程中占用cpu较高的线程情况</h3><p>　　使用<code>jstack -l pid</code>命令来查询出Spark Streaming中所有线程情况，这里查询的结果是所有线程的结果，太多，不容易快速定位问题。<br>　　这个时候，需要采用<code>ps -mp pid -o THREAD,tid,time</code>命令来查看线程内进程的cpu占用情况，此结果是经过排序的，可以很容易地发现占用率排名前几名的线程号（pid）。<br>　　之后对于cpu占用率较高的线程，采用<code>printf &quot;%x\n&quot; tid</code>命令，将线程号转化为16进制形式。<br>　　采用<code>jstack pid |grep tid</code>命令查询相关线程的情况。<br>　　这个过程手动输入比较复杂，推荐一个阿里的脚本，可以比较方便的查询出进程内cpu占用率前五的线程情况。具体情况请见连接<a href="https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-show-busy-java-threads" target="_blank" rel="noopener">oldratlee/useful-scripts</a><br>　　回到我的案例，通过这一系列的操作，我发现cpu占用较高的线程都是用于gc，看不出来什么有用的信息。  </p>
+<h3 id="3-查看进程内存情况"><a href="#3-查看进程内存情况" class="headerlink" title="3.查看进程内存情况"></a>3.查看进程内存情况</h3><p>　　采用<code>jstat -gcutil pid 2000 10</code>命令查看进程内存情况，其中2000表示2000毫秒采集一次，10表示连续采集内存情况10次。<br>　　此时我发现，内存中Eden区域和Old区域的利用率都达到了99%或者100%，由此推断，应该是内存发生了泄漏，接下来就需要对于java类内存占用情况进行分析。  </p>
+<h3 id="4-查看java类对象占用的内存情况"><a href="#4-查看java类对象占用的内存情况" class="headerlink" title="4.查看java类对象占用的内存情况"></a>4.查看java类对象占用的内存情况</h3><p>　　采用<code>jmap -histo pid &gt; ./record.txt</code>命令来查询进程中java类对象内存占用情况。经操作，也没有看出来什么有用的信息。  </p>
+<h3 id="5-生成JVM快照，采用Linux-mat分析快照文件"><a href="#5-生成JVM快照，采用Linux-mat分析快照文件" class="headerlink" title="5.生成JVM快照，采用Linux mat分析快照文件"></a>5.生成JVM快照，采用Linux mat分析快照文件</h3><p>　　采用上面的命令生成的信息不够全面，需要生成JVM快照来更详细地分析问题。所以采用<code>jmap -dump:format=b,file=dump.bin pid</code>命令来生成JVM快照文件。<br>　　此时有两点需要提示，一是生成jvm快照所需要的时间较长，而且生成过程中会导致整个机器的负载较高，线上环境谨慎使用；二是jvm快照文件dump.bin较大，一般都是GB级别，所以想下载到本地进行分析比较麻烦，在看了这篇博客（<a href="https://www.cnblogs.com/liangzs/p/8489321.html" target="_blank" rel="noopener">jvm内存快照dump文件太大，怎么分析</a>）之后，我采用了<strong><em>Linux mat</em></strong>在机器上进行分析。<br>　　在生成快照文件后，首先通过<a href="http://www.eclipse.org/mat/downloads.php" target="_blank" rel="noopener">mat下载链接</a>获取mat，上传至服务器，解压，修改<strong><em>MemoryAnalyzer.ini</em></strong>文件中最大内存配置，一般设置为JVM内存的两倍。然后给MemoryAnalyzer文件加执行权限。准备好了之后执行<code>./ParseHeapDump.sh dump.bin org.eclipse.mat.api:suspects org.eclipse.mat.api:overview org.eclipse.mat.api:top_components</code>命令来生成JVM快照分析报告。生成之后的报告较小，很容易下来到本地进行浏览分析。<br>　　顺便提醒一下，mat生成报告的过程也比较久，造成的系统负载也比较高，生产环境酌情使用。  </p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>　　通过刚才一系列操作分析，造成Driver节点cpu占用率高的原因，应该是Spark Streaming程序较为复杂，stage过程较多，偶尔程序处理完成的速度跟不上Kafka拉取速度，累计情况下导致内存泄漏。之后会对于Spark Streaming程序进行优化。  </p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ol>
+<li><a href="https://www.cnblogs.com/liangzs/p/8489321.html" target="_blank" rel="noopener">jvm内存快照dump文件太大，怎么分析</a></li>
+<li><a href="https://blog.csdn.net/u010862794/article/details/78020231" target="_blank" rel="noopener">线上java程序CPU占用过高问题排查</a></li>
+<li><a href="http://apache-spark-developers-list.1001551.n3.nabble.com/Driver-memory-leak-td11876.html" target="_blank" rel="noopener">Driver memory leak?</a></li>
+</ol>
 
       
     </div>
@@ -246,13 +251,13 @@
         
   
   <div class="categories">
-    <a href="/categories/算法/">算法</a>
+    <a href="/categories/Spark/">Spark</a>
   </div>
 
         
   
   <div class="tags">
-    <a href="/tags/Java/">Java</a>, <a href="/tags/算法/">算法</a>, <a href="/tags/一致性hash/">一致性hash</a>
+    <a href="/tags/Spark/">Spark</a>, <a href="/tags/调优/">调优</a>, <a href="/tags/cpu/">cpu</a>, <a href="/tags/占用率/">占用率</a>
   </div>
 
 <!-- Baidu Button BEGIN -->
@@ -268,10 +273,8 @@
 
 <nav id="pagination" >
     
-    <a href="/2018/03/02/essay-2018-03-02/" class="alignleft prev" >上一页</a>
     
-    
-    <a href="/2017/04/26/currentThread-and-this/" class="alignright next" >下一页</a>
+    <a href="/2019/09/03/SQL语句知识点/" class="alignright next" >下一页</a>
     
     <div class="clearfix"></div>
 </nav>
